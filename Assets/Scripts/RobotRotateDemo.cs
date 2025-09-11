@@ -21,7 +21,7 @@ public class OnRobotReadyProxy : AndroidJavaProxy
 }
 #endif
 
-public class TemiRobotDemo : MonoBehaviour
+public class RobotRotateDemo : MonoBehaviour
 {
     [SerializeField] private Button rotateRightBtn;
     [SerializeField] private Button rotateLeftBtn;

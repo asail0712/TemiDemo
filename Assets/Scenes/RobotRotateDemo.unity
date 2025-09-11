@@ -859,6 +859,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1595432064517593456, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.0000076293945
+      objectReference: {fileID: 0}
     - target: {fileID: 3134343852745210502, guid: 67117722a812a2e46ab8cb8eafbf5f5e, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1490,7 +1494,7 @@ GameObject:
   - component: {fileID: 1178413805}
   - component: {fileID: 1178413806}
   m_Layer: 0
-  m_Name: TemiRobotDemo
+  m_Name: RobotRotateDemo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
