@@ -67,8 +67,11 @@ namespace Granden.temi
                 // 3) 取得 Robot 實例（建議傳 Activity）
                 using (var robotClass = new AndroidJavaClass("com.robotemi.sdk.Robot"))
                 {
-                    robot = robotClass.CallStatic<AndroidJavaObject>("getInstance");//, activity);
+                    robot = robotClass.CallStatic<AndroidJavaObject>("getInstance");
+                    //robot = robotClass.CallStatic<AndroidJavaObject>("getInstance", activity);
                 }
+
+                FindAllFunc();
 
                 if (robot == null)
                 {
@@ -123,6 +126,22 @@ namespace Granden.temi
             });
         }
 
+        public void Call<T>(string methodName, Action<T> finishAction, params object[] args)
+        {
+            if (!bIsReady || robot == null)
+            {
+                Debug.LogError($"When Calling {methodName}, Temi Is Not Ready !!");
+                finishAction.Invoke(default(T));
+            }
+
+            RunOnUiThread(() =>
+            {
+                T result = SafeJavaCall(() => robot.Call<T>(methodName, args), methodName);
+
+                finishAction.Invoke(result);
+            });
+        }
+
         /***********************************
          * private
          * ********************************/
@@ -155,6 +174,57 @@ namespace Granden.temi
                 Debug.LogWarning("[Temi] ❌ " + tag + " → " + ex.Message); return false; 
             }
         }
+
+        // 泛型版本：有回傳值
+        private T SafeJavaCall<T>(Func<T> invoker, string tag)
+        {
+            T result = default(T);
+            try
+            {
+                result = invoker();
+                Debug.Log("[Temi] ✅ " + tag);
+                return result;
+            }
+            catch (AndroidJavaException aje)
+            {
+                Debug.LogWarning("[Temi] ❌ " + tag + " → " + aje);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Debug.LogWarning("[Temi] ❌ " + tag + " → " + ex);
+                return result;
+            }
+        }
+
+        private void FindAllFunc()
+        {
+            try
+            {
+                // 列出實際類名
+                string clsName = robot.Call<AndroidJavaObject>("getClass")
+                                      .Call<string>("getName");
+                Debug.Log("[Temi] Robot class = " + clsName);
+
+                // 列出所有 public 方法名，確認是否有 beWithMe
+                var methods = robot.Call<AndroidJavaObject>("getClass")
+                                   .Call<AndroidJavaObject[]>("getMethods");
+                bool hasBeWithMe = false;
+                foreach (var m in methods)
+                {
+                    string name = m.Call<string>("getName");
+                    if (name == "beWithMe") hasBeWithMe = true;
+                    // Debug.Log("[Temi] method: " + name); // 需要時打開
+                }
+                Debug.Log("[Temi] has beWithMe = " + hasBeWithMe);
+            }
+            catch (AndroidJavaException aje)
+            {
+                Debug.LogError("[Temi] 反射檢查失敗: " + aje);
+            }
+
+        }
+
 #endif //UNITY_ANDROID
     }
 }
