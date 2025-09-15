@@ -132,6 +132,8 @@ namespace Granden.temi
             {
                 Debug.LogError($"When Calling {methodName}, Temi Is Not Ready !!");
                 finishAction.Invoke(default(T));
+
+                return;
             }
 
             RunOnUiThread(() =>
@@ -209,14 +211,14 @@ namespace Granden.temi
                 // 列出所有 public 方法名，確認是否有 beWithMe
                 var methods = robot.Call<AndroidJavaObject>("getClass")
                                    .Call<AndroidJavaObject[]>("getMethods");
-                bool hasBeWithMe = false;
+                bool hasFunc = false;
                 foreach (var m in methods)
                 {
                     string name = m.Call<string>("getName");
-                    if (name == "beWithMe") hasBeWithMe = true;
+                    if (name == "isMapLocked") hasFunc = true;
                     // Debug.Log("[Temi] method: " + name); // 需要時打開
                 }
-                Debug.Log("[Temi] has beWithMe = " + hasBeWithMe);
+                Debug.Log("[Temi] has isMapLocked = " + hasFunc);
             }
             catch (AndroidJavaException aje)
             {
