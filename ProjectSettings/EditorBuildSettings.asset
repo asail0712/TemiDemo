@@ -14,9 +14,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/RobotFollowDemo.unity
     guid: 294dfc360ce41164fad7a6f4a24db900
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/RobotMappingDemo.unity
     guid: 7468465bea5c1f845a6187c8b3a17c58
+  - enabled: 1
+    path: Assets/Scenes/TemiAutoMove.unity
+    guid: ba86429c30541d84e8f630981cff4353
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
