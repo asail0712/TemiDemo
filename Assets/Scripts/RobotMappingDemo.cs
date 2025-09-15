@@ -6,21 +6,20 @@ using Granden.temi;
 
 public class RobotMappingDemo : MonoBehaviour
 {
-    [SerializeField] private Button editMapBtn;
-    [SerializeField] private Button finishEditBtn;
     [SerializeField] private Button addGoalBtn;
     [SerializeField] private Button removeGoalBtn;
     [SerializeField] private InputField inputText;
 
     private TemiRobotProxy robotProxy;
+    private bool bIsLocked;
 
     void Start()
     {
-        editMapBtn.interactable     = false;
-        finishEditBtn.interactable  = false;
-        addGoalBtn.interactable     = false;
-        removeGoalBtn.interactable  = false;
-        inputText.interactable      = false;
+        bIsLocked                   = false;
+
+        addGoalBtn.interactable     = !bIsLocked;
+        removeGoalBtn.interactable  = !bIsLocked;
+        inputText.interactable      = !bIsLocked;
 
         robotProxy = new TemiRobotProxy();
 
@@ -32,32 +31,7 @@ public class RobotMappingDemo : MonoBehaviour
                 return;
             }
 
-            RefreshUI();
-
-            // 綁定按鈕
-            if (editMapBtn)
-            {
-                editMapBtn.onClick.AddListener(() => 
-                { 
-                    Debug.Log("[Temi] Begin Edit Map");
-                    robotProxy.Call<int>("continueMapping", (result) =>
-                    {
-                        RefreshUI();
-                    });
-                });
-            }
-
-            if (finishEditBtn)
-            {
-                finishEditBtn.onClick.AddListener(() => 
-                { 
-                    Debug.Log("[Temi] Finish Edit Map");
-                    robotProxy.Call<int>("finishMapping", (result) => 
-                    {
-                        RefreshUI();
-                    });
-                });
-            }
+            Debug.Log("[Temi] Initial Complete !!");
 
             if (addGoalBtn)
             {
@@ -66,7 +40,7 @@ public class RobotMappingDemo : MonoBehaviour
                     Debug.Log("[Temi] Add Goal");
                     robotProxy.Call<bool>("saveLocation", (b) => 
                     {
-                        RefreshUI();
+                        Debug.Log($"[Temi] Add Goal Result {b}");
                     }, inputText.text);
                 });
             }
@@ -78,7 +52,7 @@ public class RobotMappingDemo : MonoBehaviour
                     Debug.Log("[Temi] Remove Goal");
                     robotProxy.Call<bool>("deleteLocation", (b) =>
                     {
-                        RefreshUI();
+                        Debug.Log($"[Temi] Remove Goal Result {b}");
                     }, inputText.text);
                 });
             }
@@ -98,31 +72,5 @@ public class RobotMappingDemo : MonoBehaviour
 
         robotProxy.ReleaseProxy();
 #endif
-    }
-
-    private void RefreshUI()
-    {
-        robotProxy.Call<AndroidJavaObject>("isMapLocked", (b) => 
-        {
-            bool bIsLocked = false;
-
-            Debug.Log($"[Temi] isMapLocked Result {b}");
-
-            if (b != null)
-            {
-                // Kotlin Boolean? 對應到 Java Boolean (java.lang.Boolean)
-                bIsLocked = b.Call<bool>("booleanValue");
-            }
-            else
-            {
-                Debug.Log($"[Temi] isMapLocked Null");
-            }
-
-            editMapBtn.interactable     = bIsLocked;
-            finishEditBtn.interactable  = !bIsLocked;
-            addGoalBtn.interactable     = !bIsLocked;
-            removeGoalBtn.interactable  = !bIsLocked;
-            inputText.interactable      = !bIsLocked;
-        });
     }
 }

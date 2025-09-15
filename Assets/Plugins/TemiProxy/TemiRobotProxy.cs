@@ -131,7 +131,7 @@ namespace Granden.temi
             if (!bIsReady || robot == null)
             {
                 Debug.LogError($"When Calling {methodName}, Temi Is Not Ready !!");
-                finishAction.Invoke(default(T));
+                finishAction?.Invoke(default(T));
 
                 return;
             }
@@ -140,7 +140,7 @@ namespace Granden.temi
             {
                 T result = SafeJavaCall(() => robot.Call<T>(methodName, args), methodName);
 
-                finishAction.Invoke(result);
+                finishAction?.Invoke(result);
             });
         }
 
